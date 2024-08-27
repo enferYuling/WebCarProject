@@ -1,0 +1,187 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../layuimini/lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../layuimini/css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="layui-form layuimini-form" lay-filter="formTest">
+
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label required">id</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" lay-verify="required" lay-reqtext="部门名不能为空" placeholder="请输入部门名" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">部门名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="departmentName" lay-verify="required" lay-reqtext="部门名称不能为空" placeholder="请输入部门名称" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label ">描述</label>
+            <div class="layui-input-block">
+                <input type="text" name="description" placeholder="请输入描述" value="" class="layui-input">
+            </div>
+        </div>
+
+        @*<div class="layui-form-item">
+            <label class="layui-form-label">领导</label>
+            <div class="layui-input-block">
+                <input type="number" name="leaderId" placeholder="请输入领导" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">父级部门</label>
+            <div class="layui-input-block">
+                <input type="email" name="parentId" placeholder="请输入父级部门" value="" class="layui-input">
+            </div>
+        </div>*@
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">领导</label>
+            <div class="layui-input-block">
+                <select id="leaderSelect" name="leaderId" lay-verify="required">
+                    <option value=""></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">父级部门</label>
+            <div class="layui-input-block">
+                <select id="parentSelect" name="parentId" lay-verify="required">
+                    <option value=""></option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+            </div>
+        </div>
+    </div>
+    <script src="../layuimini/lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+    <script>
+
+        //部门id
+        var id = window.location.search.substring(4);
+
+        //父亲的window对象
+        console.log(parent);
+
+        layui.use(['form', 'table'], function () {
+            var form = layui.form,
+                layer = layui.layer,
+                table = layui.table,
+                $ = layui.$;
+
+            //根据部门id发起异步请求获取部门信息
+            $.ajax({
+                url: '/DepartmentInfo/GetDepartmentInfoById',
+                type: 'get',
+                data: {
+                    id: id
+                },
+                success: function (res) {
+                    console.log(res);
+
+                    //领导下拉
+                    for (var i = 0; i < res.data.leaderOptions.length; i++) {
+                        var title = res.data.leaderOptions[i].title;
+                        var value = res.data.leaderOptions[i].value;
+
+                        $('#leaderSelect').append('<option value="' + value + '">' + title + '</option>');
+                    }
+
+                    //父级部门
+                    for (var i = 0; i < res.data.parentOptions.length; i++) {
+                        var title = res.data.parentOptions[i].title;
+                        var value = res.data.parentOptions[i].value;
+
+                        $('#parentSelect').append('<option value="' + value + '">' + title + '</option>');
+                    }
+
+
+                    form.render('select'); //刷新select选择框渲染
+
+                    //给表单赋值
+                    form.val("formTest", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
+                        "departmentName": res.data.departmentInfo.departmentName
+                        , "description": res.data.departmentInfo.description
+                        , "leaderId": res.data.departmentInfo.leaderId
+                        , "parentId": res.data.departmentInfo.parentId
+                        , "id": res.data.departmentInfo.id
+                    });
+                }
+            });
+
+            //把部门信息展示到输入框里
+
+            //监听提交
+            form.on('submit(saveBtn)', function (data) {
+                console.log(data);
+
+                //var index = layer.alert(JSON.stringify(data.field), {
+                //    title: '最终的提交信息'
+                //}, function () {
+
+                //    // 关闭弹出层
+                //    layer.close(index);
+                //    //关闭添加部门页面
+                //    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                //    parent.layer.close(iframeIndex);
+
+                //});
+
+                //写异步请求
+                $.ajax({
+                    url: '/DepartmentInfo/UpdateDepartmentInfo',//请求的地址，接口
+                    type: 'post',
+                    data: data.field,
+                    success: function (res) {
+                        if (res.code == 200) {
+                           //关闭添加部门页面
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(iframeIndex);
+
+                            ////拿父级的window去刷新列表 
+                            //parent.table.reload('currentTableId', {
+                            //    page: {
+                            //        curr: 1
+                            //    }
+                            //    , where: {
+                            //    }
+                            //}, 'data');
+
+                        } else {
+                            layer.msg(res.msg);
+                        }
+                    }
+                });
+
+                return false;
+            });
+
+        });
+    </script>
+</body>
+</html>

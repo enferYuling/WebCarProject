@@ -1,0 +1,122 @@
+﻿@{ Layout = null;}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../layuimini/lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../layuimini/css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="layui-form layuimini-form" lay-filter="formTest">
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label required">id</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" lay-verify="required" lay-reqtext="角色名不能为空" placeholder="请输入角色名" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">角色名</label>
+            <div class="layui-input-block">
+                <input type="text" name="roleName" lay-verify="required" lay-reqtext="角色名不能为空" placeholder="请输入角色名" value="" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">描述</label>
+            <div class="layui-input-block">
+                <input type="text" name="description" placeholder="请输入描述" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="../layuimini/lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+    <script>
+
+        //获取url上的id
+        console.log(window.location.search);
+        var id = window.location.search.substring(4);
+
+        layui.use(['form'], function () {
+            var form = layui.form,
+                layer = layui.layer,
+                $ = layui.$;
+
+
+            //根据id查询角色信息ajax
+            $.ajax({
+                url: '/RoleInfo/GetRoleInfoById',
+                type: 'get',
+                data: {
+                    id: id
+                },
+                success: function (res) {
+                    console.log(res);
+
+                    //给表单赋值
+                    form.val("formTest", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
+                        "roleName": res.data.roleInfo.roleName // "name": "value"
+                        , "description": res.data.roleInfo.description
+                        , "id": id
+                    });
+                }
+            });
+
+        
+            //监听提交
+            form.on('submit(saveBtn)', function (data) {
+                console.log(data);
+
+                //发起异步请求
+                $.ajax({
+                    url: '/RoleInfo/UpdateRoleInfo',
+                    type: 'post',
+                    data: data.field,
+                    success: function (res) {
+                        //友好提示
+                        if (res.code == 200) {
+                            //关添加的那个页面（当前页面）
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(iframeIndex);
+                        } else {
+                            layer.msg(res.msg);
+                        }
+                    }
+                });
+
+
+
+                //var index = layer.alert(JSON.stringify(data.field), {
+                //    title: '最终的提交信息'
+                //}, function () {
+                //    // 关闭弹出层
+                //    layer.close(index);
+
+                //    //关添加的那个页面（当前页面）
+                //    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                //    parent.layer.close(iframeIndex);
+
+                //});
+
+                return false;
+            });
+
+        });</script>
+</body>
+</html>
