@@ -31,27 +31,35 @@ namespace Bll
               
                 return null;
             }
+            try
+            {
+                var base_user = this.db.Queryable<Base_User>().Where(a => a.account == account).First();
+                var pwd = MD5Help.GetMD5Hash(password + "CarProject");
+                if (base_user == null)
+                {
+                    msg = "该用户不存在，请在客户端注册";
+                    return null;
+                }
+                if (pwd != base_user.password)
+                {
+                    msg = "密码错误，请重新输入";
 
-            var base_user = this.db.Queryable<Base_User>().Where(a => a.account == account).First();
-            var pwd = MD5Help.GetMD5Hash(password + "CarProject");
-            if (base_user == null)
+                    return null;
+                }
+
+                base_user.Loginnumber += 1;
+
+                base_user.logintime = DateTime.Now;
+                this.db.Updateable(base_user).UpdateColumns(it => new { it.logintime, it.loginmonth, it.Loginnumber, it.monthnumber }).ExecuteCommand();
+                msg = "登陆成功";
+                return base_user;
+            }
+            catch (Exception ex)
             {
-                msg = "该用户不存在，请在客户端注册";
+                msg = ex.Message;
                 return null;
             }
-            if (pwd != base_user.password)
-            {
-               msg="密码错误，请重新输入";
-                
-                return null;
-            }
-            
-            base_user.Loginnumber += 1;
            
-            base_user.logintime = DateTime.Now;
-            this.db.Updateable(base_user).UpdateColumns(it => new { it.logintime, it.loginmonth, it.Loginnumber, it.monthnumber }).ExecuteCommand();
-            msg = "登陆成功";
-            return base_user;
         }
     }
 }

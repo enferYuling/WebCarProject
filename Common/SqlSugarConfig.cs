@@ -7,10 +7,10 @@ namespace Common
 {
     public class SqlSugarConfig
     {
-        ////private static readonly string connectionString = "Data Source=NXCL2024;Database=CarProject;User Id=sa;Password=car2024@;";
-        private static readonly string connectionString = "Data Source=.;Database=CarProject;User Id=sa;Password=123456;";
+        private static readonly string connectionString = "Data Source=8.137.119.17;Database=CarProject;User Id=sa;Password=Hbjkj@#123;";
+        //  private static readonly string connectionString = "Data Source=.;Database=CarProject;User Id=sa;Password=123456;";
 
-       
+
         public static SqlSugarClient GetInstance()
         {
             var db = new SqlSugarClient(new ConnectionConfig()

@@ -28,7 +28,8 @@ namespace WebCarProject
         }
 
         public IConfiguration Configuration { get; }
-        private static readonly string connectionString = "Data Source=.;Database=CarProject;User Id=sa;Password=123456;";
+        // private static readonly string connectionString = "Data Source=.;Database=CarProject;User Id=sa;Password=123456;";
+        private static readonly string connectionString = "Data Source=8.137.119.17;Database=CarProject;User Id=sa;Password=Hbjkj@#123;";
         /// <summary>
         /// ≈‰÷√◊¢≤·
         /// </summary>
