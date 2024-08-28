@@ -176,11 +176,14 @@
                         password: data.password
                     },
                     success: function (res) {
-                        console.log(res);
+                      
                         if (res.code == 200) {
                             window.location = '/Home/Index';
                             //给我一个用户的名字，保存到sessionStorage
-                            sessionStorage.setItem('Name', res.data);
+                            console.log(data);
+                            sessionStorage.setItem('Name', res.data.realname);
+                            sessionStorage.setItem('account', res.data.account);
+                            sessionStorage.setItem('userid', res.data.userid);
                            
                         } else {
                             layer.msg(res.msg);

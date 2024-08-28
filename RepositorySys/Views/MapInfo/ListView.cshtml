@@ -15,6 +15,7 @@
 </head>
 <body>
     <div class="layuimini-container">
+       
         <div class="layuimini-main">
 
             <fieldset class="table-search-fieldset">
@@ -23,15 +24,21 @@
                     <form class="layui-form layui-form-pane" action="">
                         <div class="layui-form-item">
                             <div class="layui-inline">
-                                <label class="layui-form-label">用户名</label>
+                                <label class="layui-form-label">文件日期</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" name="userName" autocomplete="off" class="layui-input">
+                                    <input type="text" autocomplete="off" id="filetime1" name="filetime1" class="layui-input" placeholder="开始日期">
+                                </div>
+                                <div class="layui-form-mid">
+                                    -
+                                </div>
+                                <div class="layui-input-inline">
+                                    <input type="text" autocomplete="off" id="filetime2" name="filetime2" class="layui-input" placeholder="结束日期">
                                 </div>
                             </div>
                             <div class="layui-inline">
-                                <label class="layui-form-label">账号</label>
+                                <label class="layui-form-label">地图名称</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" name="account" autocomplete="off" class="layui-input">
+                                    <input type="text" name="mapName" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
 
@@ -65,14 +72,25 @@
         //var table;
 
 
-        layui.use(['form', 'table'], function () {
+        layui.use(['form', 'table','laydate'], function () {
             var $ = layui.jquery,
                 form = layui.form;
            table = layui.table;
-
+           var laydate = layui.laydate;
+           
+         //日期 
+  laydate.render({
+    elem: '#filetime1'
+    
+  });
+  laydate.render({
+    elem: '#filetime2'
+   
+  });
+  //表格
             table.render({
                 elem: '#currentTableId',
-                url: '/UserInfo/GetUserInfos',//数据接口
+                url: '/MapInfo/GetPageList',//数据接口
                 toolbar: '#toolbarDemo',
                 defaultToolbar: ['filter', 'exports', 'print', {
                     title: '提示',
@@ -81,15 +99,11 @@
                 }],
                 cols: [[
                     { type: "checkbox", width: 50 },
-                    { field: 'id', width: 80, title: 'ID', sort: true, hide: true },
-                    { field: 'account', minWidth: 80, title: '账号' },
-                    { field: 'sex', width: 80, title: '性别', sort: true },
-                    { field: 'userName', width: 80, title: '用户名' },
-                    { field: 'phoneNum', title: '手机', minWidth: 150 },
-                    { field: 'email', minWidth: 80, title: '邮箱', sort: true },
-                    { field: 'departmentName', minWidth: 80, title: '部门', sort: true },
-                    { field: 'createTime', minWidth: 80, title: '创建时间', sort: true },
-                    { title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center" }
+                    { field: 'mapmodelid', width: 80, title: 'ID', sort: true, hide: true },
+                    { field: 'mapName', width:200, title: '地图名称' },
+                    { field: 'fileaddress', minWidth: 200, title: '文件地址' },
+                    { field: 'filetime', width: 100, title: '文件时间' },
+                     
                 ]],
                 limits: [10, 15, 20, 25, 50, 100],
                 limit: 10,
@@ -99,21 +113,16 @@
 
             // 监听搜索操作
             form.on('submit(data-search-btn)', function (data) {
-                console.log(data);
-
-                //var result = JSON.stringify(data.field);
-                //layer.alert(result, {
-                //    title: '最终的搜索信息'
-                //});
-
+               
                 //执行搜索重载
                 table.reload('currentTableId', {
                     page: {
                         curr: 1
                     }
                     , where: {
-                        account: data.field.account,
-                        userName: data.field.userName
+                        filedate1: data.field.filedate1,
+                        filedate2: data.field.filedate2,
+                        filename: data.field.mapName,
                     }
                 }, 'data');
 
@@ -127,19 +136,15 @@
 
                 if (obj.event === 'add') {  // 监听添加操作
                     var index = layer.open({
-                        title: '添加用户',
+                        title: '添加建模信息',
                         type: 2,
                         shade: 0.2,
                         maxmin: true,
                         shadeClose: true,
                         area: ['100%', '100%'],
-                        content: '/UserInfo/CreateUserInfoView',
+                        content: '/MapInfo/CreateView',
                         end: function (index, layero) {
-                            //if (confirm('确定要关闭么')) { //只有当点击confirm框的确定时，该层才会关闭
-                            //    layer.close(index)
-                            //}
-                            //return false;
-
+                           
                             //执行搜索重载
                             table.reload('currentTableId', {
                                 page: {
@@ -149,12 +154,10 @@
                                 }
                             }, 'data');
 
-                            console.log('我被关闭了');
+                            
                         }
                     });
-                    //$(window).on("resize", function () {
-                    //    layer.full(index);
-                    //});
+                    
                 } else if (obj.event === 'delete') {  // 监听删除操作
                     var checkStatus = table.checkStatus('currentTableId')
                         , data = checkStatus.data;
@@ -195,7 +198,7 @@
 
             //监听表格复选框选择
             table.on('checkbox(currentTableFilter)', function (obj) {
-                console.log(obj)
+                 
             });
 
             table.on('tool(currentTableFilter)', function (obj) {

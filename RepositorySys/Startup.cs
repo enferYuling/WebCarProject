@@ -85,7 +85,7 @@ namespace WebCarProject
 
 
             services.AddScoped<IUserInfoBll, UserInfoBll>();
-            //services.AddScoped<IUserInfoDal, UserInfoDal>();
+            services.AddScoped<IMapBll, MapBll>();
 
             //services.AddScoped<IDepartmentInfoBll, DepartmentInfoBll>();
             //services.AddScoped<IDepartmentInfoDal, DepartmentInfoDal>();

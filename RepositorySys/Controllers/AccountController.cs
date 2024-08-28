@@ -68,8 +68,10 @@ namespace WebCarProject.Controllers
 
                 //登录成功后保存用户名到session中
                 HttpContext.Session.SetString("UserName", userInfo.realname);
+                HttpContext.Session.SetString("account", userInfo.account);
+                HttpContext.Session.SetString("userid", userInfo.userid);
                 //返回用户名字
-                res.Data = userInfo.realname;
+                res.Data = userInfo;
             }
             res.Msg = msg;
 

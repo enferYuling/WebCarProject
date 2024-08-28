@@ -1,0 +1,16 @@
+灵武
+https://111.51.65.40/webui/#/business/resourceaccess
+
+阿里云云服务器
+NXCL2024
+VNC
+公网ip:8.137.119.17
+用户名:Administrator
+密码：Hbjkj@#123
+
+路由器广域网ip:192.168.1.4
+路由器端口：
+8000 摄像头
+
+数据库connectionString = "Data Source=8.137.119.17;Database=CarProject;User Id=sa;Password=Hbjkj@#123;";
+
