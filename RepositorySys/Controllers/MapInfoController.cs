@@ -61,12 +61,17 @@ namespace WebCarProject.Controllers
             {
                 return BadRequest("No file uploaded");
             }
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "uploads\\");
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\uploads\\");
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
+            if (file.FileName.Contains(".pcd"))
+            {
+                file.FileName.Replace(".pcd", ".txt");
+            }
             path += file.FileName;
+            
             var stream = new FileStream(path, FileMode.Create);
           
             file.CopyTo(stream);
@@ -90,6 +95,17 @@ namespace WebCarProject.Controllers
             Pro_Map entity = JsonConvert.DeserializeObject<Pro_Map>(entityjson);
             ResultModel result = _mapBll.CreateInfo(keyValue,entity, createuseraccount);
             return Json(result);
+        }
+        /// <summary>
+        /// 下载文件
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult DownloadFile()
+        {
+            string filePath = @"C:\web\uploads\GlobalMap.pcd";
+            string fileName = Path.GetFileName(filePath);
+            return File(filePath, "application/octet-stream", fileName);
         }
     }
 }
