@@ -66,19 +66,20 @@ namespace WebCarProject.Controllers
             {
                 Directory.CreateDirectory(path);
             }
-            if (file.FileName.Contains(".pcd"))
-            {
-                file.FileName.Replace(".pcd", ".txt");
-            }
+           
             path += file.FileName;
-            
-            var stream = new FileStream(path, FileMode.Create);
+            string directory = Path.GetDirectoryName(path);
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(path);
+            string newExtension = ".txt";
+            string newFilePath = Path.Combine(directory, fileNameWithoutExtension + newExtension);
+            var stream = new FileStream(newFilePath, FileMode.Create); 
+           file.CopyTo(stream);
           
-            file.CopyTo(stream);
-
+            //System.IO.File.Copy(path, newFilePath);
+          //  System.IO.File.Delete(path);
             result.Code = 200;
             result.Msg = "上传成功";
-            result.Data = path;
+            result.Data = newFilePath;
 
             return Json(result);
         }
