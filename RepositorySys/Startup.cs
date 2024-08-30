@@ -87,13 +87,22 @@ namespace WebCarProject
             services.AddScoped<IUserInfoBll, UserInfoBll>();
             services.AddScoped<IMapBll, MapBll>();
 
-            //services.AddScoped<IDepartmentInfoBll, DepartmentInfoBll>();
-            //services.AddScoped<IDepartmentInfoDal, DepartmentInfoDal>();
-
-            //services.AddScoped<IRoleInfoBll, RoleInfoBll>();
-            //services.AddScoped<IRoleInfoDal, RoleInfoDal>();
-
-            //services.AddScoped<IR_UserInfo_RoleInfoDal, R_UserInfo_RoleInfoDal>();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin", builder =>
+                {
+                    builder.WithOrigins("https://webapi.amap.com", "https://webst02.is.autonavi.com", "https://webst01.is.autonavi.com", "https://webst03.is.autonavi.com") // 允许的源域名
+                          .AllowAnyMethod()
+                          .AllowAnyHeader()
+                 .WithExposedHeaders("Content-Disposition")
+                 .SetIsOriginAllowedToAllowWildcardSubdomains()
+                 .SetIsOriginAllowed(isOriginAllowed =>
+                 {
+                     // 允许域名为空
+                     return isOriginAllowed == null || isOriginAllowed == "https://webapi.amap.com"|| isOriginAllowed== "https://webst02.is.autonavi.com"|| isOriginAllowed== "https://webst01.is.autonavi.com"|| isOriginAllowed== "https://webst03.is.autonavi.com"|| isOriginAllowed=="null";
+                 });
+                });
+            });
         }
 
         /// <summary>
@@ -111,10 +120,11 @@ namespace WebCarProject
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+            
             app.UseStaticFiles();  //使用静态文件
 
             app.UseRouting();//使用路由
-
+            app.UseCors("AllowSpecificOrigin");
             app.UseAuthorization();//授权
 
             //使用session
@@ -126,6 +136,8 @@ namespace WebCarProject
                     name: "default",
                     pattern: "{controller=Account}/{action=LoginView}/{id?}");
             });
+        
+           
         }
     }
 }
