@@ -39,25 +39,26 @@
         const ctx = canvas.getContext('2d');
         // 创建一个新的 Image 对象
 
-         img.src = 'http://localhost:55031/uploads/map.jpeg';
-        checkImageExists("http://localhost:55031/uploads/mapcanvas.jpeg")
+        // img.src = 'http://localhost:55031/uploads/map.jpeg';
+          img.src = 'http://8.137.119.17:82/uploads/map.jpeg';
+        checkImageExists("http://8.137.119.17:82/uploads/mapcanvas.jpeg")
             .then(exists => {
                 if (exists) {
-                    img.src = "http://localhost:55031/uploads/mapcanvas.jpeg";
+                    img.src = "http://8.137.119.17:82/uploads/mapcanvas.jpeg";
                     console.log('图片存在');
                 } else {
                     console.log('图片不存在');
                 }
             });
       
-            // img.src = 'http://8.137.119.17:82/uploads/map.jpeg';
+           
             var imgWidth;
             var imgHeight;
 
             img.onload = function () {
                 // 假设缩小比例为 0.5
                 let scale = 0.2;
-                if (img.src == "http://localhost:55031/uploads/mapcanvas.jpeg")
+                if (img.src == "http://8.137.119.17:82/uploads/mapcanvas.jpeg")
                 {
                     scale = 1;
                 }
@@ -225,7 +226,7 @@
                     });
         }
         function Cleardraw() {
-            img.src = "http://localhost:55031/uploads/map.jpeg";
+            img.src = "http://8.137.119.17:82/uploads/map.jpeg";
             img.onload();
         }
 

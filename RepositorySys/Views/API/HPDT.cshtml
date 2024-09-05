@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <meta name="viewport" content="initial-scale=1.0,  width=device-width">
     <style>
         html,
         body,
@@ -15,27 +14,26 @@
             height: 100%;
         }
     </style>
+    <script src="https://webapi.amap.com/maps?v=2.0&key=1fb14fb036db1acdbd820ac277e9b5be"></script>
     <title>卫星图</title>
 
 </head>
 
 <body>
-    <div id="container"></div>
-    <script src="https://webapi.amap.com/maps?v=2.0&key=1fb14fb036db1acdbd820ac277e9b5be&plugin=AMap.MouseTool"></script>
-
+    <div id="container"></div> 
     <script>
 
-    //图片
-     var imageLayer = new AMap.ImageLayer({
-        // url: 'https://amappc.cn-hangzhou.oss-pub.aliyun-inc.com/lbs/static/img/dongwuyuan.jpg',
-         url: 'https://8.137.119.17:85/uploads/map.jpeg',
+    ////图片
+    // var imageLayer = new AMap.ImageLayer({
+    //    // url: 'https://amappc.cn-hangzhou.oss-pub.aliyun-inc.com/lbs/static/img/dongwuyuan.jpg',
+    //     url: 'https://8.137.119.17:85/uploads/map.jpeg',
 
-        bounds: new AMap.Bounds(
-            [106.298882,38.417148],
-            [106.284134,38.424194]
-        ),
-        zooms: [10, 25]
-    });
+    //    bounds: new AMap.Bounds(
+    //        [106.298882,38.417148],
+    //        [106.284134,38.424194]
+    //    ),
+    //    zooms: [10, 25]
+    //});
         var map = new AMap.Map('container', {
             resizeEnable: true,
             center: [106.298882, 38.424194],
@@ -45,86 +43,7 @@
         ],
             zoom: 17,
         });
-       //绘制
-    var mouseTool = new AMap.MouseTool(map);
-        var $ = function(elementId){
-        return document.getElementById(elementId);
-    };
-    var lnglatInput = $('lnglat');
-    var pixelInput = $('pixel');
-
-    // 经纬度坐标转成容器像素坐标
-    function lnglat2container() {
-        if(!lnglatInput.value) return
-        var inputVal = lnglatInput.value.split(',');
-        var lnglat = new AMap.LngLat(inputVal[0], inputVal[1]);
-        var pixel = map.lngLatToContainer(lnglat);
-        pixelInput.value = pixel.round();
-    }
-
-    // 容器像素坐标转成经纬度坐标
-    function container2lnglat() {
-        if(!pixelInput.value) return
-        var inputVal = pixelInput.value.split(',');
-        var pixel = new AMap.Pixel(inputVal[0],inputVal[1]);
-        var lnglat = map.containerToLngLat(pixel);
-        lnglatInput.value = lnglat;
-    }
-    //     // 创建纯文本标记
-    // var text = new AMap.Text({
-    //     text:'纯文本标记',
-    //     anchor:'center', // 设置文本标记锚点
-    //     draggable:true,
-    //     cursor:'pointer',
-    //     angle:10,
-    //     style:{
-    //         'padding': '.75rem 1.25rem',
-    //         'margin-bottom': '1rem',
-    //         'border-radius': '.25rem',
-    //         'background-color': 'white',
-    //         'width': '15rem',
-    //         'border-width': 0,
-    //         'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
-    //         'text-align': 'center',
-    //         'font-size': '20px',
-    //         'color': 'blue'
-    //     },
-    //     position: [106.298882, 38.424194]
-    // });
-    // text.setMap(map);
-    function getQueryString(name) {
-    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-    results = regex.exec(location.search);
-    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
-   // const queryString = window.location.search;
-   var queryString = getQueryString("isdraw"); // 返回 "value"
-if(queryString=='true') //进行标注
-{
-   draw('polyline')
-}
-
-    //监听draw事件可获取画好的覆盖物
-    var overlays = [];
-    mouseTool.on('draw',function(e){
-        overlays.push(e.obj);
-    })
-    function draw(type){
-      switch(type){
-
-        case 'polyline':{
-            mouseTool.polyline({
-              strokeColor:'#80d8ff'
-              //同Polyline的Option设置
-            });
-            break;
-        }
-
-      }
-    }
-
-
+   
     </script>
 </body>
 
