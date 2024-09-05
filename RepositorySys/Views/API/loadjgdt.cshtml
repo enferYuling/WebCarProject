@@ -26,8 +26,10 @@
     <!-- <img id="container" src="../Debug/uploads/map.jpeg"  style="display: none;" alt="map" /> -->
     <div class="canvas-container">
         <canvas id="myCanvas"></canvas>
+        <button onclick="Cleardraw()" >重绘</button>
     </div>
-
+    <script src="../layuimini/lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+    
     <script>
 
 
@@ -37,159 +39,196 @@
         const ctx = canvas.getContext('2d');
         // 创建一个新的 Image 对象
 
-        // img.src = '../Debug/uploads/map.jpeg';
+         img.src = 'http://localhost:55031/uploads/map.jpeg';
+        checkImageExists("http://localhost:55031/uploads/mapcanvas.jpeg")
+            .then(exists => {
+                if (exists) {
+                    img.src = "http://localhost:55031/uploads/mapcanvas.jpeg";
+                    console.log('图片存在');
+                } else {
+                    console.log('图片不存在');
+                }
+            });
+      
+            // img.src = 'http://8.137.119.17:82/uploads/map.jpeg';
+            var imgWidth;
+            var imgHeight;
 
-        img.src = 'http://8.137.119.17:82/uploads/map.jpeg';
-        var imgWidth;
-        var imgHeight;
+            img.onload = function () {
+                // 假设缩小比例为 0.5
+                let scale = 0.2;
+                if (img.src == "http://localhost:55031/uploads/mapcanvas.jpeg")
+                {
+                    scale = 1;
+                }
+                imgWidth = img.width * scale;
+                imgHeight = img.height * scale;
 
-        img.onload = function () {
-            // 假设缩小比例为 0.5
-            let scale = 0.2;
-            imgWidth = img.width * scale;
-            imgHeight = img.height * scale;
+                // 设置画布大小与缩小后的图片尺寸一致
 
-            // 设置画布大小与缩小后的图片尺寸一致
+                canvas.width = imgWidth;
+                canvas.height = imgHeight;
 
-            canvas.width = imgWidth;
-            canvas.height = imgHeight;
+                // 绘制缩小后的图片到画布
+                ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
 
-            // 绘制缩小后的图片到画布
-            ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
+            };
 
-        };
+            let isDrawing = false;
+            let isShowDrawing = true;
+            let lastX, lastY;
 
-        // window.onload = function () {
+            canvas.addEventListener('mousedown', function (e) {
+
+                if (isShowDrawing) {
+
+                }
+                else {
+                    isDrawing = true;
+                    lastX = e.offsetX;
+                    lastY = e.offsetY;
+                }
 
 
-        // 绘制矩形
-        //ctx.fillStyle = 'blue';
-        //ctx.fillRect(50, 50, 100, 100);
+            });
+            let offsetX = 0;
+            let offsetY = 0;
+            canvas.addEventListener('mousemove', function (e) {
 
-        // 绘制圆形
-        //   ctx.beginPath();
-        //   ctx.arc(200, 200, 50, 0, 2 * Math.PI);
-        //   ctx.strokeStyle = 'green';
-        //   ctx.lineWidth = 5;
-        //   ctx.stroke();
+                if (isDrawing) {
 
-        //   // 绘制文本
-        //   ctx.font = '20px Arial';
-        //   ctx.fillStyle = 'red';
-        //   ctx.fillText('Hello on Image', 300, 100);
+                    ctx.beginPath();
+                    ctx.moveTo(lastX, lastY);
+                    ctx.lineTo(e.offsetX, e.offsetY);
+                    ctx.strokeStyle = 'red';
+                    ctx.lineWidth = 5;
+                    ctx.stroke();
+                    lastX = e.offsetX;
+                    lastY = e.offsetY;
+                }
 
-        let isDrawing = false;
-        let isShowDrawing = true;
-        let lastX, lastY;
+            });
+            let isAddingText = false;
 
-        canvas.addEventListener('mousedown', function (e) {
+            canvas.addEventListener('dblclick', function (e) {
 
-            if (isShowDrawing) {
-
-            }
-            else {
-                isDrawing = true;
+                isAddingText = true;
+                isShowDrawing = false;
                 lastX = e.offsetX;
                 lastY = e.offsetY;
-            }
 
+            });
 
-        });
-        let offsetX = 0;
-        let offsetY = 0;
-        canvas.addEventListener('mousemove', function (e) {
+            document.addEventListener('keydown', function (e) {
+                if (!isShowDrawing) {
+                    if (isAddingText) {
+                        if (e.key === 'Backspace') {
+                            ctx.clearRect(lastX, lastY - 20, ctx.measureText(currentText).width, 20);
+                            currentText = '';
+                            ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
+                        } else if (e.key === 'Enter') {
+                            // 确认输入
+                            isAddingText = false;
 
-            if (isDrawing) {
-
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(e.offsetX, e.offsetY);
-                ctx.strokeStyle = 'red';
-                ctx.lineWidth = 5;
-                ctx.stroke();
-                lastX = e.offsetX;
-                lastY = e.offsetY;
-            }
-
-        });
-        let isAddingText = false;
-
-        canvas.addEventListener('dblclick', function (e) {
-
-            isAddingText = true;
-            isShowDrawing = false;
-            lastX = e.offsetX;
-            lastY = e.offsetY;
-
-        });
-
-        document.addEventListener('keydown', function (e) {
-            if (!isShowDrawing) {
-                if (isAddingText) {
-                    if (e.key === 'Backspace') {
-                        ctx.clearRect(lastX, lastY - 20, ctx.measureText(currentText).width, 20);
-                        currentText = '';
-                        ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
-                    } else if (e.key === 'Enter') {
-                        // 确认输入
-                        isAddingText = false;
-
-                        isShowDrawing = true;
-                        currentText = '';
-                    } else if (e.key === 'Escape') {
-                        ctx.clearRect(lastX, lastY - 20, ctx.measureText(currentText).width, 20);
-                        currentText = '';
-                        ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
+                            isShowDrawing = true;
+                            currentText = '';
+                        } else if (e.key === 'Escape') {
+                            ctx.clearRect(lastX, lastY - 20, ctx.measureText(currentText).width, 20);
+                            currentText = '';
+                            ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
+                        }
+                        else if (/^[a-zA-Z0-9\u4e00-\u9fa5\s!#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]$/.test(e.key)) {
+                            // 添加字符
+                            currentText += e.key;
+                            ctx.clearRect(lastX, lastY - 20, ctx.measureText(currentText).width, 20);
+                            ctx.font = '80px Arial';
+                            ctx.fillStyle = 'blue';
+                            ctx.fillText(currentText, lastX, lastY);
+                        }
                     }
-                    else if (/^[a-zA-Z0-9\u4e00-\u9fa5\s!#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]$/.test(e.key)) {
-                        // 添加字符
-                        currentText += e.key;
-                        ctx.clearRect(lastX, lastY - 20, ctx.measureText(currentText).width, 20);
-                        ctx.font = '80px Arial';
-                        ctx.fillStyle = 'blue';
-                        ctx.fillText(currentText, lastX, lastY);
+                } else {
+                    switch (e.key) {
+                        case 'P': {
+                            saveCanvas();
+                            break;
+                        }
+                        case 'p': {
+                            saveCanvas();
+                            break;
+                        }
                     }
                 }
-            } else {
-                switch (e.key) {
-                    case 'P': {
-                        saveCanvas();
-                        break;
-                    }
-                    case 'p': {
-                        saveCanvas();
-                        break;
-                    }
-                }
+            });
+
+            let currentText = '';
+            canvas.addEventListener('mouseup', function () {
+                isDrawing = false;
+
+            });
+
+
+            //  };
+            function resizeToFit(width, height) {
+
+                canvas.width = width
+                canvas.height = height
+
             }
-        });
 
-        let currentText = '';
-        canvas.addEventListener('mouseup', function () {
-            isDrawing = false;
+            // window.addEventListener('resize', resizeToFit(800,500));
+            //下载
+            //function saveCanvas() {
+            //    alert(111)
+            //    const dataURL = canvas.toDataURL();
+            //    console.log(dataURL)
+            //    const a = document.createElement('a');
+            //    a.href = dataURL;
+            //    a.download = 'canvas_image.jpeg';
+            //    document.body.appendChild(a);
+            //    a.click();
+            //    document.body.removeChild(a);
+            //}
 
-        });
+            function saveCanvas() {
+                const dataURL = canvas.toDataURL("image/jpeg",1);
+                const blob = dataURLToBlob(dataURL);
+                const formData = new FormData();
+                formData.append('canvasData', blob, 'mapcanvas.jpeg');
+                fetch('/API/SaveToServer', {
+                    method: 'POST',
+                    body: formData
+                })
 
+                    .then(data => console.log(data))
+                    .catch(error => console.error(error));
+            }
 
-        //  };
-        function resizeToFit(width, height) {
+            function dataURLToBlob(dataURL) {
+                const arr = dataURL.split(',');
+                const mime = arr[0].match(/:(.*?);/)[1];
+                const bstr = atob(arr[1]);
+                let n = bstr.length;
+                const u8arr = new Uint8Array(n);
+                while (n--) {
+                    u8arr[n] = bstr.charCodeAt(n);
+                }
+                return new Blob([u8arr], { type: mime });
+            }
 
-            canvas.width = width
-            canvas.height = height
-
+            function checkImageExists(imageUrl) {
+                return fetch(imageUrl)
+                    .then(response => {
+                        return response.status === 200;
+                    })
+                    .catch(error => {
+                        return false;
+                    });
+        }
+        function Cleardraw() {
+            img.src = "http://localhost:55031/uploads/map.jpeg";
+            img.onload();
         }
 
-        // window.addEventListener('resize', resizeToFit(800,500));
-        //下载
-        function saveCanvas() {
-            const dataURL = canvas.toDataURL();
-            const a = document.createElement('a');
-            a.href = dataURL;
-            a.download = 'canvas_image.jpeg';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
     </script>
 
 </body>

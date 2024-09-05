@@ -45,6 +45,9 @@ namespace WebCarProject.Filters
                         //context.HttpContext.Response.Redirect("/Account/LoginView");
                         context.Result = new RedirectResult("/Account/LoginView");
 
+                    } else if (path.Contains("api/"))
+                    {
+                          
                     }
                     else  //2、接口的过滤
                     {

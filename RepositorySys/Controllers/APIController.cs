@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace WebCarProject.Controllers
 {
@@ -22,6 +23,7 @@ namespace WebCarProject.Controllers
         {
             _APIBll = APIBll;
         }
+      
         /// <summary>
         /// 地图标注
         /// </summary>
@@ -30,6 +32,53 @@ namespace WebCarProject.Controllers
         {
             return View();
         }
-
+        /// <summary>
+        /// 地图查看
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult jglddt()
+        {
+            return View();
+        }
+        /// <summary>
+        /// 航拍地图
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult HPDT()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult SaveToServer()
+        {
+            try
+            {
+                var httpRequest = Request;
+                if (httpRequest.Form.Files.Count > 0)
+                {
+                    var postedFile = httpRequest.Form.Files[0];
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\uploads\\");
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    //  var filePath = Path.Combine("your_server_path", postedFile.FileName);
+                    path += postedFile.FileName;
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        postedFile.CopyTo(stream);
+                    }
+                    return Ok("Canvas saved successfully.");
+                }
+                else
+                {
+                    return BadRequest("No file uploaded.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

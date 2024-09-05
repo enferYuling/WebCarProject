@@ -135,8 +135,8 @@ namespace WebCarProject
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                  //  pattern: "{controller=Account}/{action=LoginView}/{id?}");
-                    pattern: "{controller=API}/{action=loadjgdt}/{id?}");
+                    pattern: "{controller=Account}/{action=LoginView}/{id?}");
+                   // pattern: "{controller=Account}/{action=LoginView}/{id?}");
             });
         
            
