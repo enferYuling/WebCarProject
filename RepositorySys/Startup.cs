@@ -86,6 +86,7 @@ namespace WebCarProject
 
             services.AddScoped<IUserInfoBll, UserInfoBll>();
             services.AddScoped<IMapBll, MapBll>();
+            services.AddScoped<IAPIBll, APIBll>();
 
             services.AddCors(options =>
             {
@@ -134,7 +135,8 @@ namespace WebCarProject
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Account}/{action=LoginView}/{id?}");
+                  //  pattern: "{controller=Account}/{action=LoginView}/{id?}");
+                    pattern: "{controller=API}/{action=loadjgdt}/{id?}");
             });
         
            
