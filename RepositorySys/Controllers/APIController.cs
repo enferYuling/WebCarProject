@@ -48,6 +48,14 @@ namespace WebCarProject.Controllers
         {
             return View();
         }
+        /// <summary>
+        /// 视频推流
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Testsp()
+        {
+            return View();
+        }
         [HttpPost]
         public IActionResult SaveToServer()
         {
@@ -79,6 +87,20 @@ namespace WebCarProject.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+        /// <summary>
+        /// 视频推流
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [HttpGet]
+        public ActionResult SPTL1()
+        {
+            ResultModel res = new ResultModel();
+           _APIBll.FWQSP(); 
+                res.Msg = "成功";
+                res.Code = 200; 
+            return Json(res);
         }
     }
 }

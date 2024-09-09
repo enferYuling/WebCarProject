@@ -1,0 +1,35 @@
+﻿<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0,  width=device-width">
+
+    <title>推流</title>
+
+</head>
+
+<body>
+
+  
+    <div class="canvas-container">
+     
+        <button onclick="Cleardraw()">重绘</button>
+    </div>
+   
+
+    <script>
+         
+        function Cleardraw() {
+            fetch('/API/SPTL1', {
+                method: 'Get',
+            })
+           .then(data => console.log(data))
+           .catch(error => console.error(error));
+        }
+
+    </script>
+
+</body>
+
+</html>
