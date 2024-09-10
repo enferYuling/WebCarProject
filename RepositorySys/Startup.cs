@@ -87,6 +87,7 @@ namespace WebCarProject
             services.AddScoped<IUserInfoBll, UserInfoBll>();
             services.AddScoped<IMapBll, MapBll>();
             services.AddScoped<IAPIBll, APIBll>();
+           // services.AddScoped<IPlayBll, PlayBll>();
 
             services.AddCors(options =>
             {
@@ -103,7 +104,7 @@ namespace WebCarProject
                      return isOriginAllowed == null || isOriginAllowed == "https://webapi.amap.com"|| isOriginAllowed== "https://webst02.is.autonavi.com"|| isOriginAllowed== "https://webst01.is.autonavi.com"|| isOriginAllowed== "https://webst03.is.autonavi.com"|| isOriginAllowed=="null";
                  });
                 });
-            });
+            }); 
         }
 
         /// <summary>

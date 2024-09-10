@@ -1,33 +1,35 @@
-﻿<!doctype html>
+﻿<!DOCTYPE html>
+
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1.0,  width=device-width">
-
-    <title>推流</title>
-
+    <title>WebRTC Playback</title>
 </head>
 
 <body>
-
-  
-    <div class="canvas-container">
-     
-        <button onclick="Cleardraw()">重绘</button>
-    </div>
-   
-
+    <video id="videoPlayer" autoplay controls></video>
+    <button onclick="Cleardraw()">转换 </button>
+    <button onclick="bofang()">播放 </button>
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <script>
-         
+        var outputWebRtcUrl = "";
         function Cleardraw() {
-            fetch('/API/SPTL1', {
+            fetch('/API/PlayVideo?rtspUrl=rtsp://8.137.119.17:554/live/test1', {
                 method: 'Get',
             })
-           .then(data => console.log(data))
-           .catch(error => console.error(error));
+                .then(data => console.log(data))
+                .catch(error => console.log(error));
         }
-
+        function bofang() {
+            const videoPlayer = document.getElementById('videoPlayer');
+            fetch('/API/PlayVideo?rtspUrl=rtsp://8.137.119.17:554/live/test1')
+                .then(response => response.blob())
+                .then(blob => {
+                    const videoUrl = URL.createObjectURL(blob);
+                    videoPlayer.srcObject = blob;
+                })
+                .catch(error => console.error('Error fetching video:', error));
+        }
     </script>
 
 </body>
