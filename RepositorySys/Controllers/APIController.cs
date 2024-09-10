@@ -11,6 +11,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
 using FFMpegCore;
+using Common;
+using Microsoft.AspNetCore.SignalR;
 
 namespace WebCarProject.Controllers
 {
@@ -19,11 +21,12 @@ namespace WebCarProject.Controllers
     {
         //业务访问层对象
         IAPIBll  _APIBll;
-       
+        private readonly IHubContext<VideoHub> _hubContext;
 
-        public APIController(IAPIBll APIBll)
+        public APIController(IAPIBll APIBll, IHubContext<VideoHub> hubContext)
         {
-            _APIBll = APIBll; 
+            _APIBll = APIBll;
+            _hubContext = hubContext;
         }
       
         /// <summary>
@@ -100,35 +103,19 @@ namespace WebCarProject.Controllers
         /// <param name="rtspUrl"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> PlayVideo(string rtspUrl)
+        [HttpPost]
+        public async Task<IActionResult> PlayVideo([FromBody] string rtspUrl)
         {
-            try
-            {
-                string tempOutputFilePath = Path.GetTempFileName() + ".webm";
+            await _hubContext.Clients.All.SendAsync("StartVideoConversion", rtspUrl);
+            return Ok();
 
-                await FFMpegArguments
-                   .FromFileInput(rtspUrl)
-                   .OutputToFile(tempOutputFilePath, true, options => options
-                       .WithVideoCodec("libvpx-vp9")
-                       .WithAudioCodec("opus")
-                       .ForceFormat("webm"))
-                   .ProcessAsynchronously();
+        }
+        [HttpPost]
+        public async Task<IActionResult> PlayVideo2([FromBody] string rtspUrl)
+        {
+            await _APIBll.StartConversion(rtspUrl);
+            return Ok();
 
-                var memoryStream = new MemoryStream();
-                using (var fileStream = new FileStream(tempOutputFilePath, FileMode.Open))
-                {
-                    await fileStream.CopyToAsync(memoryStream);
-                }
-
-                System.IO.File.Delete(tempOutputFilePath);
-
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                return new FileStreamResult(memoryStream, "video/webm");
-            }
-            catch (Exception ex)
-            {
-                return Ok(ex.Message);
-            }
         }
     }
 }

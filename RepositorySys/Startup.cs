@@ -104,7 +104,9 @@ namespace WebCarProject
                      return isOriginAllowed == null || isOriginAllowed == "https://webapi.amap.com"|| isOriginAllowed== "https://webst02.is.autonavi.com"|| isOriginAllowed== "https://webst01.is.autonavi.com"|| isOriginAllowed== "https://webst03.is.autonavi.com"|| isOriginAllowed=="null";
                  });
                 });
-            }); 
+            });
+            services.AddSignalR();
+            services.AddSingleton<APIBll>();
         }
 
         /// <summary>
@@ -128,12 +130,20 @@ namespace WebCarProject
             app.UseRouting();//使用路由
             app.UseCors("AllowSpecificOrigin");
             app.UseAuthorization();//授权
+            app.UseCors("cors");//跨域
 
             //使用session
             app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<VideoHub>("/videoHub");
+                endpoints.MapPost("API/PlayVideo", async context =>
+                {
+                    var rtspUrl = await context.Request.ReadFromJsonAsync<string>();
+                    await context.Response.WriteAsync("正在启动视频转换...");
+                    await context.Response.WriteAsync(rtspUrl);
+                });
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Account}/{action=LoginView}/{id?}");
