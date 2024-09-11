@@ -29,14 +29,15 @@ namespace Bll
     {
 
         public ISqlSugarClient db;
+
         private readonly IHubContext<VideoHub> _hubContext;
         private readonly string _ffmpegPath;
  
-        public APIBll(ISqlSugarClient datadb)
+        public APIBll(ISqlSugarClient datadb, IHubContext<VideoHub> hubContext)
         {
             this.db = datadb;
             this._ffmpegPath = @"D:\BaiduNetdiskDownload\ffmpeg-7.0.2-essentials_buildffmpeg-7.0.2-essentials_build\bin\ffmpeg.exe";
-             
+            _hubContext = hubContext;
         }
       
         /// <summary>
@@ -76,7 +77,7 @@ namespace Bll
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "ffmpeg",
-                    Arguments = $"-i {inputRstpUrl} -c:v libvpx -c:a libopus -f webm {outputWebmPath}",
+                    Arguments = $"-i rtsp://8.137.119.17:554/live/test1 -c:v libvpx-vp9 -c:a opus -f webm -g 5 -content_type video/webm pipe:1",
                     UseShellExecute = false,
                     RedirectStandardError = true,
                     RedirectStandardOutput = true,
@@ -104,6 +105,54 @@ namespace Bll
             catch (Exception ex)
             {
                 Console.Error.WriteLine(ex.Message);
+            }
+        }
+        /// <summary>
+        /// 转码
+        /// </summary>
+        /// <param name="rtspUrl"></param>
+        /// <param name="outputPath">输出地址</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+
+        public async Task StartConversion(string rtspUrl)
+        {
+            // ProcessStartInfo startInfo = new ProcessStartInfo("D:\\BaiduNetdiskDownload\\ffmpeg-7.0.2-full_build\\bin\\ffmpeg.exe")
+            ProcessStartInfo startInfo = new ProcessStartInfo()
+            {
+                FileName="cmd.exe",
+                Arguments = $"ffmpeg -i {rtspUrl} -c:v libvpx-vp9 -c:a opus -f webm -g 5 -content_type video/webm pipe:1",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true,
+            };
+            var ffmpegProcess = new Process
+            {
+                StartInfo = startInfo
+            };
+            try
+            {
+              
+
+                ffmpegProcess.Start();
+
+                while (!ffmpegProcess.StandardOutput.EndOfStream)
+                {
+                    var data = new byte[1024];
+                    //var output = ffmpegProcess.StandardOutput.ReadLine();
+                    //ffmpegProcess.Kill();
+                    var bytesRead = ffmpegProcess.StandardOutput.BaseStream.Read(data, 0, data.Length);
+                    if (bytesRead > 0)
+                    {
+                        await _hubContext.Clients.All.SendAsync("VideoData", data.Take(bytesRead).ToArray());
+                    }
+                }
+               // ffmpegProcess.Kill();
+            }
+            catch (Exception ex)
+            {
+                string msg = ex.Message;
+               // ffmpegProcess.Kill();
             }
         }
     }

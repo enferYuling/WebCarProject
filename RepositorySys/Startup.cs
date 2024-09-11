@@ -105,7 +105,8 @@ namespace WebCarProject
                  });
                 });
             });
-            
+            services.AddSignalR();
+            services.AddSingleton<APIBll>();
         }
 
         /// <summary>
@@ -136,7 +137,13 @@ namespace WebCarProject
 
             app.UseEndpoints(endpoints =>
             {
-                
+                endpoints.MapHub<VideoHub>("/videoHub");
+                endpoints.MapPost("API/PlayVideo", async context =>
+                {
+                    var rtspUrl = await context.Request.ReadFromJsonAsync<string>();
+                    await context.Response.WriteAsync("正在启动视频转换...");
+                    await context.Response.WriteAsync(rtspUrl);
+                });
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Account}/{action=LoginView}/{id?}");
