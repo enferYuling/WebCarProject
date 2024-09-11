@@ -12,7 +12,8 @@ namespace IBll
 {
     public interface IAPIBll
     {
-        public  Task  StartConversion(string rtspUrl);
+      
         public ResultModel NetCoreVlc(string rtspUrl);
+        public  Task ConvertRstpToWebmAsync(string inputRstpUrl, string outputWebmPath);
     }
 }

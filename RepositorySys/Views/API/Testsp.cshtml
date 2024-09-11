@@ -45,7 +45,7 @@
         }
         function startVideo1() {
             const rtspUrl = document.getElementById('rtspUrlInput').value;
-            fetch('/API/PlayVideo2', {
+            fetch('/API/ConvertRstpToWebmAsync', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

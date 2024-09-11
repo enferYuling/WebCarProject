@@ -21,12 +21,12 @@ namespace WebCarProject.Controllers
     {
         //业务访问层对象
         IAPIBll  _APIBll;
-        private readonly IHubContext<VideoHub> _hubContext;
+       
 
-        public APIController(IAPIBll APIBll, IHubContext<VideoHub> hubContext)
+        public APIController(IAPIBll APIBll)
         {
             _APIBll = APIBll;
-            _hubContext = hubContext;
+            
         }
       
         /// <summary>
@@ -97,25 +97,14 @@ namespace WebCarProject.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        /// <summary>
-        /// 播放视频
-        /// </summary>
-        /// <param name="rtspUrl"></param>
-        /// <returns></returns>
+      
         [HttpGet]
         [HttpPost]
-        public async Task<IActionResult> PlayVideo([FromBody] string rtspUrl)
+        public  IActionResult  ConvertRstpToWebmAsync()
         {
-            await _hubContext.Clients.All.SendAsync("StartVideoConversion", rtspUrl);
-            return Ok();
 
-        }
-        [HttpPost]
-        public async Task<IActionResult> PlayVideo2([FromBody] string rtspUrl)
-        {
-            await _APIBll.StartConversion(rtspUrl);
-            return Ok();
-
+             _APIBll.ConvertRstpToWebmAsync("rtsp://8.137.119.17:554/live/test1", @"E:\\项目\\output.webm");
+            return Ok ();
         }
     }
 }
