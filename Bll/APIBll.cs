@@ -138,7 +138,7 @@ namespace Bll
 
                 while (!ffmpegProcess.StandardOutput.EndOfStream)
                 {
-                    var data = new byte[1024];
+                    var data = new byte[102400];
                     //var output = ffmpegProcess.StandardOutput.ReadLine();
                     //ffmpegProcess.Kill();
                     var bytesRead = ffmpegProcess.StandardOutput.BaseStream.Read(data, 0, data.Length);
@@ -147,12 +147,12 @@ namespace Bll
                         await _hubContext.Clients.All.SendAsync("VideoData", data.Take(bytesRead).ToArray());
                     }
                 }
-               // ffmpegProcess.Kill();
+                 ffmpegProcess.Kill();
             }
             catch (Exception ex)
             {
                 string msg = ex.Message;
-               // ffmpegProcess.Kill();
+                 ffmpegProcess.Kill();
             }
         }
     }

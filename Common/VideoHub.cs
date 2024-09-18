@@ -18,16 +18,28 @@ namespace Common
         {
             try
             {
-                // 视频转码逻辑，与之前类似
+                //// 视频转码逻辑，与之前类似
+                //var ffmpegProcess = new Process
+                //{
+                //    StartInfo = new ProcessStartInfo
+                //    {
+                //        FileName = "ffmpeg.exe",
+                //        Arguments = $"-i {rtspUrl} -c:v libvpx-vp9 -c:a opus -f webm -g 5 -content_type video/webm pipe:1",
+                //        UseShellExecute = false,
+                //        RedirectStandardOutput = true
+                //    }
+                //};
+                ProcessStartInfo startInfo = new ProcessStartInfo()
+                {
+                    FileName = "cmd.exe",
+                    Arguments = $"ffmpeg -i {rtspUrl} -c:v libvpx-vp9 -c:a opus -f webm -g 5 -content_type video/webm pipe:1",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true,
+                };
                 var ffmpegProcess = new Process
                 {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = "ffmpeg.exe",
-                        Arguments = $"-i {rtspUrl} -c:v libvpx-vp9 -c:a opus -f webm -g 5 -content_type video/webm pipe:1",
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true
-                    }
+                    StartInfo = startInfo
                 };
 
                 ffmpegProcess.Start();
