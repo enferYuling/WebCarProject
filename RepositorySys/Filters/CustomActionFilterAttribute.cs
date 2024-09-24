@@ -45,17 +45,17 @@ namespace WebCarProject.Filters
                         //context.HttpContext.Response.Redirect("/Account/LoginView");
                         context.Result = new RedirectResult("/Account/LoginView");
 
-                    } else if (path.Contains("api/"))
+                    } else if (path.Contains("api/")|| path.Contains("uploads"))
                     {
                           
                     }
                     else  //2、接口的过滤
                     {
-                        context.Result = new JsonResult(new ResultModel
-                        {
-                            Code = 401,
-                            Msg = "请重新登录"
-                        });
+                        //context.Result = new JsonResult(new ResultModel
+                        //{
+                        //    Code = 401,
+                        //    Msg = "请重新登录"
+                        //});
                     }
                 }
 
